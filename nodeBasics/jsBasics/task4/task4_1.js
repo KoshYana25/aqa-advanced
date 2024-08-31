@@ -4,3 +4,5 @@ let circle_area = Math.PI * Math.pow(circle_radius, 2);
 
 console.log(Math.PI);
 console.log(circle_area);
+
+console.log(circle_area.toFixed(2));

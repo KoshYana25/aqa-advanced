@@ -3,3 +3,5 @@ let width = 4;
 let rectangle_area = length * width;
 
 console.log(rectangle_area);
+
+console.log(rectangle_area.toFixed(2));

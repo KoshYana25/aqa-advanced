@@ -11,8 +11,23 @@ function divide(numerator, denominator) {
     return numerator / denominator;
 }
 
-// Виклик функції з різними аргументами
+function executeWithHandling (func, ...args ) {
     try {
+        console.log(func(...args));
+    } catch (error) {
+        console.error(error.message);
+    } finally {
+        console.log("Робота завершена");
+    }
+}
+
+executeWithHandling(divide, 20, 2);
+executeWithHandling(divide, 20, 0);
+executeWithHandling(divide, 20, 'a');
+
+
+// Виклик функції з різними аргументами
+    /*try {
         console.log(divide(20, 2));
     } catch (error) {
         console.error(error.message);
@@ -34,4 +49,4 @@ function divide(numerator, denominator) {
         console.error(error.message);
     } finally {
         console.log("Робота завершена");
-    }
+    }*/

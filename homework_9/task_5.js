@@ -7,6 +7,6 @@ const users = [
 
 
 for(const person of users){
-    const { name, email, age } = users;
+    const { name, email, age } = person;
     console.log(`${person.name} ${person.lastName} is ${person.age} years old`)
 }

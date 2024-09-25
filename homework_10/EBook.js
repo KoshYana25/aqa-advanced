@@ -3,7 +3,7 @@ import { Book } from './Book.js';
 export class EBook extends Book {
     constructor(name, author, published_year, file_format = "JPEG") {
         super(name, author, published_year); 
-        this.file_format = file_format; 
+        this._file_format = file_format; 
     }
 
     get file_format() {

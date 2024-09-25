@@ -1,8 +1,8 @@
 export class Book {
     constructor (name, author, published_year) {
-        this.name = name;
-        this.author = author;
-        this.published_year = published_year;
+        this._name = name;
+        this._author = author;
+        this._published_year = published_year;
     }
 
     get name() {

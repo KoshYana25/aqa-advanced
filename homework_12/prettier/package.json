@@ -1,0 +1,16 @@
+{
+  "name": "prettier",
+  "version": "1.0.0",
+  "description": "installing prettier and eslint for better code quality",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "prettier ./src --check",
+     "prettier_fix": "prettier ./src --write"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "3.3.3"
+  }
+}

@@ -1,0 +1,127 @@
+import axios from "axios";
+
+const baseURL = "https://api.restful-api.dev/objects";
+
+// Interceptor for logging requests
+axios.interceptors.request.use(
+  function (config) {
+    console.log(
+      `Sending ${config.method.toUpperCase()} request to: ${config.url}`
+    );
+    if (config.data) {
+      console.log("Request data:", config.data);
+    }
+    return config;
+  },
+  function (error) {
+    console.error("Error in request:", error.message);
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor for logging responses
+axios.interceptors.response.use(
+  function (response) {
+    console.log(`Received response from ${response.config.url}`);
+    console.log("Status:", response.status);
+    console.log("Response data:", response.data);
+    return response;
+  },
+  function (error) {
+    if (error.response) {
+      console.error(`Error response from ${error.response.config.url}`);
+      console.error("Status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    } else {
+      console.error("Error:", error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
+async function apiRequests() {
+  let objectId = "4";
+  let objectToDelete = 6;
+
+  // GET all data
+  console.log("GET all data:");
+  try {
+    const response = await axios.get(baseURL);
+  } catch (error) {
+    console.error(
+      "Error in GET /objects:",
+      error.response ? error.response.data : error.message
+    );
+  }
+
+  // GET specific data via ID
+  console.log("GET specific data via ID");
+  try {
+    const response = await axios.get(`${baseURL}/${objectId}`);
+  } catch (error) {
+    console.error(
+      `Error in GET /objects/${objectId}:`,
+      error.response ? error.response.data : error.message
+    );
+  }
+
+  // POST new object
+  console.log("Post new object");
+  try {
+    const newObject = {
+      name: "Apple iPhone 16",
+      data: {
+        color: "green",
+        capacity: "256 GB",
+      },
+    };
+    const response = await axios.post(baseURL, newObject);
+  } catch (error) {
+    console.error(
+      "Error in POST /objects:",
+      error.response ? error.response.data : error.message
+    );
+  }
+
+  // GET all data after POST
+  console.log("GET all data after POST:");
+  try {
+    const response = await axios.get(baseURL);
+  } catch (error) {
+    console.error(
+      "Error in GET /objects:",
+      error.response ? error.response.data : error.message
+    );
+  }
+
+  // POST Create a new object via POST request
+  console.log("Creating a new object via POST request");
+  try {
+    const newObjectData = {
+      name: "Test",
+      description: "This is a test object.",
+    };
+
+    const postResponse = await axios.post(`${baseURL}`, newObjectData);
+    const newObjectId = postResponse.data.id;
+    console.log(`POST /objects/ - Created new object with ID: ${newObjectId}`);
+
+    // PUT the newly created object via PUT request
+    console.log(`Updating object (ID ${newObjectId}) via PUT request`);
+    const updatedObjectData = {
+      name: "Updated Object",
+      description: "This object has been updated before deletion.",
+    };
+
+    // DELETE the newly created object
+    console.log(`DELETE specific object (ID ${newObjectId})`);
+    const deleteResponse = await axios.delete(`${baseURL}/${newObjectId}`);
+  } catch (error) {
+    console.error(
+      `Error in POST or DELETE request:`,
+      error.response ? error.response.data : error.message
+    );
+  }
+}
+
+apiRequests();

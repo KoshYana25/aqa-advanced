@@ -17,8 +17,10 @@ class GaragePage {
   }
 
   get saveCarButton() {
-    return cy.get('.btn-primary').filter((index, element) => element.textContent.trim() === 'Add').click();
-
+    return cy
+      .get(".btn-primary")
+      .filter((index, element) => element.textContent.trim() === "Add")
+      .click();
   }
 
   // Методи

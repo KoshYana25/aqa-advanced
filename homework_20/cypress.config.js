@@ -1,17 +1,21 @@
-const webpack = require("@cypress/webpack-preprocessor");
+const fs = require("fs-extra");
+const path = require("path");
+
+function getConfigurationByFile(file) {
+  const pathToConfigFile = path.resolve("cypress", "fixtures", `${file}.json`);
+  return fs.readJsonSync(pathToConfigFile);
+}
 
 module.exports = {
   e2e: {
-    baseUrl: 'https://qauto.forstudy.space/', 
-    specPattern: 'cypress/e2e/**/*.cy.js', 
     setupNodeEvents(on, config) {
-      const options = webpack({
-        webpackOptions: require("./webpack.config"),
-        watchOptions: {},
-      });
+      const configFile = config.env.configFile || "qauto"; 
+      const customConfig = getConfigurationByFile(configFile);
 
-      on("file:preprocessor", options);
-      return config;
+      
+      return { ...config, ...customConfig };
     },
+    specPattern: "cypress/e2e/**/*.cy.js",
+    baseUrl: "https://qauto.forstudy.space/", 
   },
 };

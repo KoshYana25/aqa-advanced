@@ -8,6 +8,7 @@ Cypress.Commands.add(
       url: "/api/expenses",
       headers: {
         Authorization: "Basic Z3Vlc3Q6d2VsY29tZTJxYXV0bw==",
+        Cookie: `sid=${cookie.value}`
       },
       body: {
         reportedAt: "2024-12-02",

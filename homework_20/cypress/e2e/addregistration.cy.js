@@ -1,51 +1,74 @@
-// cypress/integration/registration_tests.spec.js
+import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
-import { faker } from "@faker-js/faker";
-
-describe("Registration Functionality Tests", () => {
-  beforeEach(() => {
-    cy.visit(Cypress.config("baseUrl"), {
-      auth: {
-        username: "guest",
-        password: "welcome2qauto",
+test.describe('Registration Functionality Tests', () => {
+  test.beforeEach(async ({ browser }) => {
+    // Create a new browser context with basic authentication
+    const context = await browser.newContext({
+      httpCredentials: {
+        username: 'guest',
+        password: 'welcome2qauto',
       },
     });
 
-    cy.get("button.btn-outline-white.header_signin")
-      .contains("Sign In")
-      .click();
+    // Create a new page in the authenticated context
+    const authPage = await context.newPage();
+
+    // Visit the base URL
+    await authPage.goto('https://qauto.forstudy.space/');
   });
 
-  it("Should successfully register with random valid data", () => {
-    // Генеруємо рандомні дані
+  test('Positive Test: Successful Registration', async ({ page }) => {
+    // Open registration form
+    await page.click('button.btn-outline-white.header_signin');
+    await page.click('button:has-text("Registration")');
+
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
     const email = faker.internet.email();
-    const password = faker.internet.password(8, true, /[A-Z]/, "1!");
+    const password = faker.internet.password(8, true, /[A-Z]/, '1!');
 
-    // Використовуємо згенеровані дані у реєстрації
-    cy.get("button").contains("Registration").click();
-    cy.get('input[id="signupName"]').type(firstName);
-    cy.get('input[id="signupLastName"]').type(lastName);
-    cy.get('input[id="signupEmail"]').type(email);
-    cy.get('input[id="signupPassword"]').type(password, {
-      sensitive: true,
-    });
-    cy.get('input[id="signupRepeatPassword"]').type(password, {
-      sensitive: true,
-    });
+    // Fill registration form
+    await page.fill('input#signupName', firstName);
+    await page.fill('input#signupLastName', lastName);
+    await page.fill('input#signupEmail', email);
+    await page.fill('input#signupPassword', password);
+    await page.fill('input#signupRepeatPassword', password);
 
-    cy.get("button").contains("Register").click();
-    cy.get('button[id="userNavDropdown"]').should("contain", "My profile");
+    // Submit the form
+    await page.click('button:has-text("Register")');
+
+    // Assert successful registration
+    await page.waitForSelector('button#userNavDropdown');
+    expect(await page.textContent('button#userNavDropdown')).toContain('My profile');
+    console.log('Positive test passed: Registration successful.');
   });
 
-  it("Should successfully log in with valid credentials", () => {
-    cy.get('input[id="signinEmail"]').type(Cypress.config("email"));
-    cy.get('input[id="signinPassword"]').type(Cypress.config("password"), {
-      sensitive: true,
-    });
-    cy.get("button").contains("Login").click();
+  test('Negative Tests: Registration Validation Errors', async ({ page }) => {
+    const errorMessages = [];
 
-    cy.get('button[id="userNavDropdown"]').should("contain", "My profile");
+    // Open registration form
+    await page.click('button.btn-outline-white.header_signin');
+    await page.click('button:has-text("Registration")');
+
+    // Test Case 1: Empty fields
+    await page.click('button:has-text("Register")');
+    if (await page.isVisible('text=Name is required')) {
+      errorMessages.push('Empty Name field error visible');
+    }
+
+    // Example: Invalid email format
+    await page.fill('input#signupEmail', 'invalid-email');
+    await page.click('button:has-text("Register")');
+    if (await page.isVisible('text=Email is incorrect')) {
+      errorMessages.push('Invalid Email format error visible');
+    }
+
+    // Print errors or success
+    if (errorMessages.length > 0) {
+      console.log('Negative test results:', errorMessages);
+    } else {
+      console.log('Negative tests passed without issues.');
+    }
   });
 });

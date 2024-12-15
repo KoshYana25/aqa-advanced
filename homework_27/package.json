@@ -1,0 +1,20 @@
+{
+  "name": "homework_27",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test:all:chrome:headed": "playwright test --headed --project='Google Chrome'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.2"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "dotenv": "^16.4.7"
+  }
+}

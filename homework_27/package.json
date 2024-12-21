@@ -2,6 +2,7 @@
   "name": "homework_27",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test:all:chrome:headed": "playwright test --headed --project='Google Chrome'"
   },

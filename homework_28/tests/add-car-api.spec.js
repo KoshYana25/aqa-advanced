@@ -1,51 +1,57 @@
 import { test, expect, request as apiRequest } from '@playwright/test';
 
-test.describe('API tests for /api/cars endpoint', () => {
+test.describe('API-based tests for /api/cars endpoint using cookies', () => {
   let apiContext;
+  let cookiesParsed;
 
   const autoSchoolUser = 'yana20@gmail.com';
   const autoSchoolPwd = 'Qwerty123!';
 
-  // API-контекст із передачею cookies перед тестами
-  test.beforeEach(async ({ page }) => {
-    apiContext = await apiRequest.newContext({
+  test.beforeEach(async ({ browser, request }) => {
+    // Логін через API
+    const loginContext = await apiRequest.newContext({
       baseURL: 'https://qauto.forstudy.space',
     });
 
-    // Aвтентифікація
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.locator('input[id="signinEmail"]').fill(autoSchoolUser);
-    await page.locator('input[id="signinPassword"]').fill(autoSchoolPwd);
-    await page.getByRole('button', { name: 'Login' }).click();
+    const loginResponse = await loginContext.post('/api/auth/signin', {
+      data: {
+        email: autoSchoolUser,
+        password: autoSchoolPwd,
+      },
+    });
 
-    // cookies після авторизації
-    const cookies = await page.context().cookies();
+    expect(loginResponse.ok()).toBeTruthy();
+    expect(loginResponse.status()).toBe(200);
 
-    // Створення нового API контексту з переданими cookies
-    apiContext = await apiRequest.newContext({
+    // кукіси після API-логіну
+    const loginCookies = await loginContext.storageState();
+    const parsedCookies = loginCookies.cookies.map(
+      (cookie) => `${cookie.name}=${cookie.value}`
+    );
+    cookiesParsed = parsedCookies.join('; ');
+
+    // контекст для подальших API-запитів
+    apiContext = await browser.newContext({
       baseURL: 'https://qauto.forstudy.space',
-      cookies: cookies, 
+      extraHTTPHeaders: {
+        cookie: cookiesParsed,
+      },
     });
   });
 
   test('Should successfully create a car with valid data', async () => {
-
     const requestBody = {
       carBrandId: 1,
       carModelId: 1,
       mileage: 122,
     };
 
-    const response = await apiContext.post('https://qauto.forstudy.space/api/cars', {
+    const response = await apiContext.request.post('/api/cars', {
       data: requestBody,
     });
 
-    console.log('Response status:', response.status());
-    console.log('Response body:', await response.text());
-
     expect(response.ok()).toBeTruthy();
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(201);
 
     const responseBody = await response.json();
     expect(responseBody.status).toBe('ok');
@@ -58,20 +64,27 @@ test.describe('API tests for /api/cars endpoint', () => {
 
   test('Should return 400 for invalid data', async () => {
     const requestBody = {
-      carBrandId: 'invalid', // Некоректний ID
+      carBrandId: 'invalid',
       carModelId: 1,
       mileage: 122,
     };
 
-    const response = await apiContext.post('https://qauto.forstudy.space/api/cars', { data: requestBody });
+    const response = await apiContext.request.post('/api/cars', {
+      data: requestBody,
+    });
+
     expect(response.status()).toBe(400);
 
     const responseBody = await response.json();
     expect(responseBody.status).toBe('error');
-    expect(responseBody.message).toBe('Bad request');
+    expect(responseBody.message).toBe('Invalid car brand type');
   });
 
+ 
   test('Should return 401 without authentication', async () => {
+    const unauthApiContext = await apiRequest.newContext({
+      baseURL: 'https://qauto.forstudy.space',
+    });
 
     const requestBody = {
       carBrandId: 1,
@@ -79,13 +92,17 @@ test.describe('API tests for /api/cars endpoint', () => {
       mileage: 122,
     };
 
-    const response = await apiContext.post('https://qauto.forstudy.space/api/cars', { data: requestBody });
+    const response = await unauthApiContext.post('/api/cars', {
+      data: requestBody,
+    });
+
     expect(response.status()).toBe(401);
 
     const responseBody = await response.json();
-    expect(responseBody.status).toBe('error');
-    expect(responseBody.message).toBe('Not authenticated');
+    expect(responseBody.status).toBe('error'); 
+    expect(responseBody.message).toBe('Not authenticated'); 
   });
+
 
   test('Should return 404 for incorrect endpoint', async () => {
     const requestBody = {
@@ -94,11 +111,32 @@ test.describe('API tests for /api/cars endpoint', () => {
       mileage: 122,
     };
 
-    const response = await apiContext.post('/api/cars-invalid', { data: requestBody });
-    expect(response.status()).toBe(404);
+    const response = await apiContext.request.post('/api/cars-invalid', {
+      data: requestBody,
+    });
+
+    expect(response.status()).toBe(404); 
 
     const responseBody = await response.json();
-    expect(responseBody.status).toBe('error');
-    expect(responseBody.message).toBe('Not found');
+    expect(responseBody.status).toBe('error'); 
+    expect(responseBody.message).toBe('Not found'); 
+  });
+
+  test('Should delete all cars if present', async () => {
+    // Отримуємо всі машини
+    const response = await apiContext.request.get('/api/cars');
+    expect(response.ok()).toBeTruthy();
+
+    const responseBody = await response.json();
+    const cars = responseBody.data;
+
+    if (cars.length > 0) {
+      for (const { id } of cars) {
+        const deleteResponse = await apiContext.request.delete(`/api/cars/${id}`);
+        expect(deleteResponse.ok()).toBeTruthy();
+        const deleteResponseBody = await deleteResponse.json();
+        expect(deleteResponseBody.data.carId).toEqual(id);
+      }
+    }
   });
 });

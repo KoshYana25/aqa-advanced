@@ -15,10 +15,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Налаштування кешу для Cypress
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            cypress-
+
       # Встановлення залежностей
       - name: Install dependencies
         working-directory: ./homework_30
         run: npm install
+
+      # Завантаження Cypress (переконаємось, що бінарний файл існує)
+      - name: Verify Cypress binary
+        working-directory: ./homework_30
+        run: npx cypress install
 
       # Pull Docker image for Cypress
       - name: Pull Docker image

@@ -1,0 +1,35 @@
+name: Run Cypress Tests in Docker
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout репозиторій
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Встановлення залежностей
+      - name: Install dependencies
+        working-directory: ./homework_30
+        run: npm install
+
+      # Pull Docker image for Cypress
+      - name: Pull Docker image
+        run: docker pull cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+
+      # Run Cypress tests in Docker
+      - name: Run Cypress tests
+        run: |
+          docker run \
+            --rm \
+            -v ${{ github.workspace }}/homework_30:/workspace \
+            -w /workspace/e2e \
+            cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 \
+            npx cypress run

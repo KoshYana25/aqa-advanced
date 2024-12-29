@@ -55,5 +55,5 @@ jobs:
             --rm \
             -v ${{ github.workspace }}/homework_23:/workspace \
             -w /workspace \
-            mcr.microsoft.com/playwright:v1.39.0-jammy \
+            mcr.microsoft.com/playwright:v1.49.1-jammy \
             npx playwright test

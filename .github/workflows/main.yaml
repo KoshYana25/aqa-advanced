@@ -11,23 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout репозиторій
+      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Встановлення залежностей
-      - name: Install dependencies
-        working-directory: ./homework_30
-        run: npm install
+      # Cache Cypress binary
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
 
-      # Завантаження бінарного файлу Cypress
-      - name: Install Cypress Binary
+      # Install dependencies and Cypress binary
+      - name: Install dependencies and Cypress binary
         working-directory: ./homework_30
-        run: npx cypress install
-
-      # Pull Docker image for Cypress
-      - name: Pull Docker image
-        run: docker pull cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+        run: |
+          npm install
+          npx cypress install
 
       # Run Cypress tests in Docker
       - name: Run Cypress tests
@@ -35,9 +37,7 @@ jobs:
           docker run \
             --rm \
             -v ${{ github.workspace }}/homework_30:/workspace \
-            -w /workspace/cypress \
+            -v ~/.cache/Cypress:/root/.cache/Cypress \
+            -w /workspace \
             cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 \
-            npx cypress run
-
-     
-
+            npx cypress run --config-file cypress.config.js

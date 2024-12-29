@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test:all:chrome:headed": "playwright test --headed --project='Google Chrome'",
     "test:all:firefox": "playwright test --project='Firefox'" 
   },
   "keywords": [],

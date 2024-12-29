@@ -137,7 +137,7 @@ Cypress.Commands.overwrite("type", (originalFn, element, text, options) => {
       cy.get("button").contains("Registration").click();
       cy.get('input[id="signupName"]').type("Yana");
       cy.get('input[id="signupLastName"]').type("Koshelia");
-      cy.get('input[id="signupEmail"]').type("yana77854@gmail.com");
+      cy.get('input[id="signupEmail"]').type("yana77996@gmail.com");
       cy.get('input[id="signupPassword"]').type("ValidPass1", {
         sensitive: true,
       });

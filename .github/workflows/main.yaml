@@ -43,23 +43,33 @@ jobs:
             npx cypress run --config-file cypress.config.js
 
   playwright-tests:
-    runs-on: ubuntu-latest
+  runs-on: ubuntu-latest
 
-    steps:
-      # Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+  steps:
+    # Checkout repository
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Pull Docker image for Playwright
-      - name: Pull Playwright Docker image
-        run: docker pull mcr.microsoft.com/playwright:v1.39.0-jammy
+    # Pull Docker image for Playwright
+    - name: Pull Playwright Docker image
+      run: docker pull mcr.microsoft.com/playwright:v1.39.0-jammy
 
-      # Run Playwright tests in Docker
-      - name: Run Playwright tests
-        run: |
-          docker run \
-            --rm \
-            -v ${{ github.workspace }}/homework_23:/workspace \
-            -w /workspace \
-            mcr.microsoft.com/playwright:v1.39.0-jammy \
-            npx playwright test
+    # Install Playwright dependencies inside the Docker container
+    - name: Install Playwright dependencies
+      run: |
+        docker run \
+          --rm \
+          -v ${{ github.workspace }}/homework_23:/workspace \
+          -w /workspace \
+          mcr.microsoft.com/playwright:v1.39.0-jammy \
+          bash -c "npm install @playwright/test"
+
+    # Run Playwright tests in Docker
+    - name: Run Playwright tests
+      run: |
+        docker run \
+          --rm \
+          -v ${{ github.workspace }}/homework_23:/workspace \
+          -w /workspace \
+          mcr.microsoft.com/playwright:v1.39.0-jammy \
+          npx playwright test

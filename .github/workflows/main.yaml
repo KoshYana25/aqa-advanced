@@ -15,12 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Cache Cypress binary
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
       # Встановлення залежностей
       - name: Install dependencies
         working-directory: ./homework_30
         run: npm install
 
-      # Завантаження бінарного файлу Cypress
+      # Завантаження Cypress binary (якщо не знайдено у кеші)
       - name: Install Cypress Binary
         working-directory: ./homework_30
         run: npx cypress install

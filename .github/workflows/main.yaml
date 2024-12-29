@@ -55,14 +55,14 @@ jobs:
       run: docker pull mcr.microsoft.com/playwright:v1.39.0-jammy
 
     # Install Playwright dependencies inside the Docker container
-    - name: Install Playwright dependencies
+    - name: Install dependencies
       run: |
         docker run \
           --rm \
           -v ${{ github.workspace }}/homework_23:/workspace \
           -w /workspace \
           mcr.microsoft.com/playwright:v1.39.0-jammy \
-          bash -c "npm install @playwright/test"
+          npm install
 
     # Run Playwright tests in Docker
     - name: Run Playwright tests

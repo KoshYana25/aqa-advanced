@@ -35,12 +35,12 @@ jobs:
         run: npx cypress install
 
       # Run Cypress tests in Docker
-      - name: Run Cypress tests
-        run: |
-          docker run \
-            --rm \
-            -v ${{ github.workspace }}/homework_30:/workspace \
-            -v ~/.cache/Cypress:/root/.cache/Cypress \
-            -w /workspace/e2e \
-            cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 \
-            npx cypress run
+- name: Run Cypress tests
+  run: |
+    docker run \
+      --rm \
+      -v ${{ github.workspace }}/homework_30:/workspace \
+      -v ~/.cache/Cypress:/root/.cache/Cypress \
+      -w /workspace/cypress \
+      cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 \
+      npx cypress run

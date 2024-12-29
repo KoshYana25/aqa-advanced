@@ -3,7 +3,7 @@ name: Run Tests in Docker
 on:
   push:
     branches:
-      - "*"
+      - main
   pull_request:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
           npm install
           npx cypress install
 
-      # Run Cypress tests in Docker
+      # Run tests in Docker
       - name: Run Cypress tests
         run: |
           docker run \

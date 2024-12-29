@@ -25,9 +25,9 @@ test.describe('Registration Functionality Tests', () => {
     await page.locator('button:has-text("Registration")').click();
 
     const firstName = faker.name.firstName();
-    const lastName = faker.name.lastName();
+    const lastName = "Rendi";
     const email = faker.internet.email();
-    const password = faker.internet.password(8, true, /[A-Z]/, '1!');
+    const password = "Welcome2022!";
 
     // Заповнюємо форму реєстрації
     await page.fill('input[id = "signupName"]', firstName);

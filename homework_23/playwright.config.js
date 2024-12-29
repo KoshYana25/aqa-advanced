@@ -38,11 +38,14 @@ module.exports = defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },*/
 
-    /*{
+    {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { ...devices['Desktop Firefox'],
+        headless: true, // Set to true for headless mode
+      },
     },
 
+    /*
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },

@@ -30,18 +30,16 @@ jobs:
         working-directory: ./homework_30
         run: npx cypress run --config-file cypress.config.js
 
- playwright-tests:
-  runs-on: ubuntu-22.04
-  container:
-    image: mcr.microsoft.com/playwright:v1.49.1-jammy
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: List files in homework_24
-      run: ls -R ./homework_24
-    - name: Install dependencies
-      working-directory: ./homework_24
-      run: npm install
-    - name: Run Playwright tests
-      working-directory: ./homework_24
-      run: npx playwright test
+  playwright-tests:
+    runs-on: ubuntu-22.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.49.1-jammy
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        working-directory: ./homework_24
+        run: npm install @playwright/test
+      - name: Run Playwright tests
+        working-directory: ./homework_24
+        run: npx playwright test

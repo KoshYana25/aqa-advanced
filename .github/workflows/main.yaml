@@ -38,8 +38,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Install dependencies
-        working-directory: ./homework_23
+        working-directory: ./homework_24
         run: npm install @playwright/test
       - name: Run Playwright tests
-        working-directory: ./homework_23
+        working-directory: ./homework_24
         run: npx playwright test

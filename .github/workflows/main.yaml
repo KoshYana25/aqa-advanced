@@ -9,8 +9,6 @@ on:
 jobs:
   cypress-tests:
     runs-on: ubuntu-22.04
-    container:
-      image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,19 +25,35 @@ jobs:
           npm install
           npx cypress install
       - name: Run Cypress tests
-        working-directory: ./homework_30
-        run: npx cypress run --config-file cypress.config.js
+        run: |
+          docker run \
+            --rm \
+            -v ${{ github.workspace }}/homework_30:/workspace \
+            -v ~/.cache/Cypress:/root/.cache/Cypress \
+            -w /workspace \
+            cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 \
+            npx cypress run --config-file cypress.config.js
 
   playwright-tests:
-    runs-on: ubuntu-22.04
-    container:
-      image: mcr.microsoft.com/playwright:v1.49.1-jammy
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install dependencies
-        working-directory: ./homework_23
-        run: npm install @playwright/test
+      - name: Pull Playwright Docker image
+        run: docker pull mcr.microsoft.com/playwright:v1.39.0-jammy
+      - name: Install Playwright dependencies
+        run: |
+          docker run \
+            --rm \
+            -v ${{ github.workspace }}/homework_23:/workspace \
+            -w /workspace \
+            mcr.microsoft.com/playwright:v1.39.0-jammy \
+            bash -c "npm install @playwright/test"
       - name: Run Playwright tests
-        working-directory: ./homework_23
-        run: npx playwright test
+        run: |
+          docker run \
+            --rm \
+            -v ${{ github.workspace }}/homework_23:/workspace \
+            -w /workspace \
+            mcr.microsoft.com/playwright:v1.49.1-jammy \
+            npx playwright test

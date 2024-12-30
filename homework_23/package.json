@@ -13,7 +13,7 @@
     "@types/node": "^22.10.2"
   },
   "scripts": {
-    "test:all:firefox": "playwright test --headed --project='Firefox'"
+    "test:all:firefox": "playwright test --headed --project='firefox'"
   },
   "keywords": [],
   "author": "",

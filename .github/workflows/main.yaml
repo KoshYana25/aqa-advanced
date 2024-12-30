@@ -37,9 +37,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: List files in homework_23
+        run: ls -R ./homework_23
       - name: Install dependencies
         working-directory: ./homework_23
-        run: npm install @playwright/test
+        run: npm install
       - name: Run Playwright tests
         working-directory: ./homework_23
-        run: npx playwright test
+        run: npx playwright test tests
+

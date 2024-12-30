@@ -45,7 +45,7 @@ jobs:
         run: |
           docker run \
             --rm \
-            -v ${{ github.workspace }}/homework_23:/workspace \
+            -v ${{ github.workspace }}/homework_24:/workspace \
             -w /workspace \
             mcr.microsoft.com/playwright:v1.39.0-jammy \
             bash -c "npm install @playwright/test"
@@ -53,7 +53,7 @@ jobs:
         run: |
           docker run \
             --rm \
-            -v ${{ github.workspace }}/homework_23:/workspace \
+            -v ${{ github.workspace }}/homework_24:/workspace \
             -w /workspace \
             mcr.microsoft.com/playwright:v1.49.1-jammy \
             npx playwright test
